@@ -9,7 +9,7 @@ def load_csv(file_path):
     DataFrame: Loaded pandas DataFrame with the first column as the index.
     """
     # Typically, the first column is used as the index.
-    dataframe = pd.read_csv(file_path, index_col=0)
+    dataframe = pd.read_csv(file_path, index_col=[0])
     return dataframe
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Load a CSV file as a DataFrame.")
