@@ -5,7 +5,7 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestRegressor
 import argparse
-import pandas as pd
+
 
 def make_pipeline(file_path, X_cols, cardinality_threshold):
     """
