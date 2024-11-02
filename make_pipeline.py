@@ -54,7 +54,9 @@ def make_pipeline(file_path, X_cols, cardinality_threshold):
         ('preprocessor', preprocessor),
         ('forest', RandomForestRegressor())
     ])
-    return pipe
+    return pipe,df
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Create a preprocessing and model pipeline.")
     parser.add_argument('file_path', type=str, help="Path to the CSV file.")
@@ -62,5 +64,10 @@ if __name__ == "__main__":
     parser.add_argument('--cardinality_threshold', type=int, default=10,
                         help="Max unique values for a column to be categorical.")
     args = parser.parse_args()
-    pipeline = make_pipeline(args.file_path, args.X_cols, args.cardinality_threshold)
+
+    # Unpack the pipeline and DataFrame returned by make_pipeline
+    pipeline, df = make_pipeline(args.file_path, args.X_cols, args.cardinality_threshold)
+
     print("Pipeline created successfully.")
+    print("Loaded DataFrame preview:")
+    print(df.head())
