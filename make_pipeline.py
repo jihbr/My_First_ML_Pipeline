@@ -7,7 +7,7 @@ from sklearn.ensemble import RandomForestRegressor
 import argparse
 
 
-def make_pipeline(file_path, X_cols, cardinality_threshold):
+def make_pipeline(file_path, X_cols):
     """
     Loads CSV into a DataFrame, separates categorical from numeric columns,
     and defines a preprocessing pipeline for the DataFrame.
@@ -15,33 +15,46 @@ def make_pipeline(file_path, X_cols, cardinality_threshold):
     Args:
         file_path (str): Path to the CSV file.
         X_cols (list): List of feature columns.
-        cardinality_threshold (int): Max number of unique values
-        for a column to be considered categorical.
 
     Returns:
         pipe (Pipeline): Data preprocessing and model pipeline.
+        df (DataFrame): Loaded DataFrame with processed columns.
     """
+    # Load the CSV file into a DataFrame
     df = load_csv(file_path)
-    X = df[X_cols]
-    # Separate categorical and numerical columns
-    cat_cols = [
-        cname for cname in X.columns
-        if (X[cname].dtype == "object" or X[cname].dtype in ["int64", "float64"])
-           and X[cname].nunique() < cardinality_threshold
-    ]
-    num_cols = [
-        cname for cname in X.columns
-        if X[cname].dtype in ['int64', 'float64'] and cname not in cat_cols
-    ]
-    # Define transformations for categorical and numerical features
+
+    # Select only the specified columns from the DataFrame
+    X = df[X_cols].copy()  # Use .copy() to avoid SettingWithCopyWarning
+
+    # Initialize lists to store categorical and numerical columns
+    cat_cols = []
+    num_cols = []
+
+    # Loop through each column to classify as categorical or numerical
+    for col in X.columns:
+        if X[col].dtype == 'bool' or X[col].dtype == 'object':
+            # Convert to string in the original df to avoid SettingWithCopyWarning
+            df.loc[:, col] = df[col].astype(str)
+            cat_cols.append(col)
+        elif X[col].dtype in ["int64", "float64"]:
+            # Ensure numerical columns are either int or float
+            num_cols.append(col)
+        else:
+            # If a column is neither categorical nor numerical, we can choose to skip it or log a warning
+            print(f"Warning: Column '{col}' has an unsupported type and will be skipped.")
+
+    # Define the transformation pipeline for categorical features
     cat_transformer = Pipeline(steps=[
         ('imputer', SimpleImputer(strategy='constant', fill_value='missing')),
         ('one_hot', OneHotEncoder(handle_unknown='ignore'))
     ])
+
+    # Define the transformation pipeline for numerical features
     num_transformer = Pipeline(steps=[
         ('imputer', SimpleImputer(strategy='median')),
         ('scaler', StandardScaler())
     ])
+
     # Combine transformations into a single preprocessor
     preprocessor = ColumnTransformer(
         transformers=[
@@ -49,25 +62,27 @@ def make_pipeline(file_path, X_cols, cardinality_threshold):
             ('cat', cat_transformer, cat_cols)
         ]
     )
-    # Create a pipeline with the preprocessor and a RandomForest model
+
+    # Create the final pipeline with the preprocessor and a RandomForest model
     pipe = Pipeline(steps=[
         ('preprocessor', preprocessor),
         ('forest', RandomForestRegressor())
     ])
-    return pipe,df
+
+    return pipe, df
 
 
+# If the script is executed directly, this block will handle command-line arguments
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Create a preprocessing and model pipeline.")
     parser.add_argument('file_path', type=str, help="Path to the CSV file.")
     parser.add_argument('--X_cols', nargs='+', required=True, help="List of feature columns.")
-    parser.add_argument('--cardinality_threshold', type=int, default=10,
-                        help="Max unique values for a column to be categorical.")
     args = parser.parse_args()
 
     # Unpack the pipeline and DataFrame returned by make_pipeline
-    pipeline, df = make_pipeline(args.file_path, args.X_cols, args.cardinality_threshold)
+    pipeline, df = make_pipeline(args.file_path, args.X_cols)
 
+    # Output to confirm successful creation and preview the DataFrame
     print("Pipeline created successfully.")
     print("Loaded DataFrame preview:")
     print(df.head())
