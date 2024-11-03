@@ -45,7 +45,7 @@ The pipeline was tested with the Spaceship Titanic dataset on Kaggle, which cont
 
 This machine learning pipeline is designed for flexibility, with customizable file paths, feature columns, and model parameters, enabling adaptation to other datasets with minimal adjustments.
 
-After downloading the training data from Kaggle https://www.kaggle.com/competitions/spaceship-titanic/discussion/309323, this terminal command python train_model.py ~/train.csv --X_cols HomePlanet CryoSleep Cabin Destination Age VIP RoomService FoodCourt ShoppingMall Spa VRDeck Name --y_col Transported --ts 0.2 --random 42
+After downloading the training data from Kaggle https://www.kaggle.com/competitions/spaceship-titanic/data?select=train.csv, this terminal command python train_model.py ~/train.csv --X_cols HomePlanet CryoSleep Cabin Destination Age VIP RoomService FoodCourt ShoppingMall Spa VRDeck Name --y_col Transported --ts 0.2 --random 42
 should return metrics for a trained model as follows: Model Metrics: {'train_data': {'score': 0.910298462056415, 'mae': 0.08226200747771066}, 'test_data': {'score': 0.32535496403239306, 'mae': 0.2296779758481886}}
 
 
