@@ -11,7 +11,6 @@ README.md - Project documentation
 ### Requirements
 Python: 3.7 or higher
 Libraries: pandas, scikit-learn, argparse
-You can install the required packages using the following command:
 
 
 ### Usage
