@@ -29,16 +29,19 @@ file_path (str): Path to the CSV file.
 --y_col (str): Target variable column, indicating transported passengers.
 --ts (float): Ratio for test set size (default is 0.2).
 --random (int): Random seed for reproducibility (default is 42).
-Model Metrics
+
+### Model Metrics
 After running train_model.py, the model metrics are printed as follows:
 
 ### Training Data:
 score: The model’s score on the training data.
 mae: Mean Absolute Error for the training set predictions.
-Test Data:
+
+### Test Data:
 score: The model’s score on the test data.
 mae: Mean Absolute Error for the test set predictions.
-Project Details
+
+### Project Details
 The pipeline was tested with the Spaceship Titanic dataset on Kaggle, which contains features such as HomePlanet, CryoSleep, Cabin, and more to help predict the transported status of passengers.
 
 This machine learning pipeline is designed for flexibility, with customizable file paths, feature columns, and model parameters, enabling adaptation to other datasets with minimal adjustments.
