@@ -2,9 +2,11 @@ from make_pipeline import make_pipeline
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error
 import argparse
+from sklearn.pipeline import Pipeline
+from typing import List
 
 
-def train_model(file_path, X_cols, y_col, ts, random):
+def train_model(file_path: str, X_cols: List[str], y_col: str, ts: float, random: int) -> Pipeline:
     """
     Defines a preprocessing pipeline for the DataFrame.
     Splits the data into train and test sets.
@@ -12,16 +14,20 @@ def train_model(file_path, X_cols, y_col, ts, random):
 
     Args:
         file_path (str): Path to the CSV file.
-        X_cols (list): List of feature columns.
+        X_cols (List[str]): List of feature columns.
         y_col (str): Target variable column.
         ts (float): Test set size ratio.
         random (int): Random seed for stochastic operations.
 
     Returns:
-        model (Pipeline): Trained machine learning pipeline with preprocessing and model.
+        Pipeline: Trained machine learning pipeline with preprocessing and model.
     """
     # Instantiate preprocessing pipeline and load DataFrame
     pipe, df = make_pipeline(file_path, X_cols)
+
+    # Verify that y_col exists in the DataFrame
+    if y_col not in df.columns:
+        raise ValueError(f"Target column '{y_col}' not found in the data.")
 
     # Separate the X and y data
     X, y = df[X_cols], df[y_col].astype(int)
